@@ -1,4 +1,14 @@
+setup:
+	./vendor/bin/sail up -d
+	@echo "Waiting for the database to be ready..."
+	@until ./vendor/bin/sail exec pgsql pg_isready -U sail -d systock_challenge; do \
+		sleep 2; \
+	done
+	./vendor/bin/sail artisan migrate --seed
+
 test:
 	./vendor/bin/sail up -d
 	./vendor/bin/sail artisan test
-	./vendor/bin/sail down --rmi local
+
+down:
+	./vendor/bin/sail down --rmi local -v
