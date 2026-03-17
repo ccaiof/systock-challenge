@@ -16,7 +16,7 @@ class CreateUserService
             ->first();
 
         if ($user) {
-            throw new UserCreationException(__('errors.user_already_exists'));
+            throw new UserCreationException(__('errors.user.already_exists'));
         }
 
         $newUser = User::create($createUserRequestDTO->toArray());

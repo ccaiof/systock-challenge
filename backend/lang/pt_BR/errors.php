@@ -3,5 +3,8 @@
 // lang/pt_BR/errors.php
 
 return [
-    'user_already_exists' => 'Usuário já existe.',
+    'user' => [
+        'already_exists' => 'Usuário já existe.',
+        'not_found' => 'Usuário com id :id não encontrado.'
+    ]
 ];

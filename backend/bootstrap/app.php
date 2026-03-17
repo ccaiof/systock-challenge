@@ -1,6 +1,5 @@
 <?php
 
-use App\Exceptions\UserCreationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,13 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (UserCreationException $e, Request $request) {
-            return response()->json([
-                'status' => $e->getCode(),
-                'message' => $e->getMessage(),
-            ], $e->getCode());
-        });
-
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([

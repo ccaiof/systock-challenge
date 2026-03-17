@@ -58,7 +58,7 @@ class CreateUserServiceTest extends TestCase
         );
 
         $this->expectException(UserCreationException::class);
-        $this->expectExceptionMessage(__('errors.user_already_exists'));
+        $this->expectExceptionMessage(__('errors.user.already_exists'));
 
         $this->createUserService->execute($userInvalid);
     }
@@ -75,7 +75,7 @@ class CreateUserServiceTest extends TestCase
         );
 
         $this->expectException(UserCreationException::class);
-        $this->expectExceptionMessage(__('errors.user_already_exists'));
+        $this->expectExceptionMessage(__('errors.user.already_exists'));
 
         $this->createUserService->execute($userInvalid);
     }
