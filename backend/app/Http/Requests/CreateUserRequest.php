@@ -20,15 +20,7 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'cpf' => ['required', 'string', 'unique:users', new Cpf()],
-            'password' => 'required|min:8'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'email.unique' => 'Email already exists',
-            'cpf.unique' => 'Cpf already exists',
+            'password' => 'required|min:6'
         ];
     }
 
