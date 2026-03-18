@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\User\CreateUserService;
 use App\Services\User\FindByIdUserService;
 use App\Services\User\ListAllUserService;
+use App\Services\User\UpdateUserService;
 use Illuminate\Http\Response;
 
 class UsersController extends Controller
@@ -16,6 +18,7 @@ class UsersController extends Controller
         readonly private ListAllUserService $listAllUserService,
         readonly private FindByIdUserService $findByIdUserService,
         readonly private CreateUserService $createUserService,
+        readonly private UpdateUserService $updateUserService
     ) {}
 
     public function index()
@@ -40,5 +43,19 @@ class UsersController extends Controller
         return UserResource::make($user)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    public function update(UpdateUserRequest $request, int $id)
+    {
+        $dto = $request->toDTO();
+
+        $user = $this->updateUserService->execute($id, $dto);
+
+        return UserResource::make($user);
+    }
+
+    public function destroy()
+    {
+        //
     }
 }

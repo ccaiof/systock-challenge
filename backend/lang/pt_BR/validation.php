@@ -14,6 +14,7 @@ return [
             'unique' => 'CPF já existe'
         ],
         'email' => [
+            'required' => 'Email é obrigatório.',
             'unique' => 'Email já existe'
         ],
         'password' => [
