@@ -1,7 +1,8 @@
 <?php
 
-namespace Tests\Feature\Users;
+namespace Tests\Feature\Products;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
@@ -18,7 +19,7 @@ class ListAllTest extends TestCase
         Sanctum::actingAs(User::factory()->create());
     }
 
-    public function test_should_list_users_paginated_structure()
+    public function test_should_list_products_paginated_structure()
     {
         $this->callRequest()
             ->assertOk()
@@ -35,13 +36,13 @@ class ListAllTest extends TestCase
             ]);
     }
 
-    public function test_should_list_all_users_paginated()
+    public function test_should_list_all_products_paginated()
     {
-        User::factory()->count(20)->create();
+        Product::factory()->count(20)->create();
 
         $this->callRequest()
             ->assertOk()
-            ->assertJsonPath('meta.total', 21)
+            ->assertJsonPath('meta.total', 20)
             ->assertJsonPath('meta.per_page', 15)
             ->assertJsonCount(15, 'data');
     }
@@ -50,12 +51,12 @@ class ListAllTest extends TestCase
     {
         $this->callRequest()
             ->assertOk()
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('meta.total', 1);
+            ->assertJsonCount(0, 'data')
+            ->assertJsonPath('meta.total', 0);
     }
 
     private function callRequest(): TestResponse
     {
-        return $this->getJson(route('users.index'));
+        return $this->getJson(route('products.index'));
     }
 }
