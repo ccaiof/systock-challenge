@@ -7,6 +7,7 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\User\CreateUserService;
+use App\Services\User\DeleteUserService;
 use App\Services\User\FindByIdUserService;
 use App\Services\User\ListAllUserService;
 use App\Services\User\UpdateUserService;
@@ -18,7 +19,8 @@ class UsersController extends Controller
         readonly private ListAllUserService $listAllUserService,
         readonly private FindByIdUserService $findByIdUserService,
         readonly private CreateUserService $createUserService,
-        readonly private UpdateUserService $updateUserService
+        readonly private UpdateUserService $updateUserService,
+        readonly private DeleteUserService $deleteUserService,
     ) {}
 
     public function index()
@@ -54,8 +56,16 @@ class UsersController extends Controller
         return UserResource::make($user);
     }
 
-    public function destroy()
+    public function destroy(int $id)
     {
-        //
+        $isUserDelete = $this->deleteUserService->execute($id);
+
+        if (!$isUserDelete) {
+            return response()->json([
+                'message' => 'Failed to delete user'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
