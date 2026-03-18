@@ -11,7 +11,7 @@ class CreateUserRequestDTO extends BaseDTO
         public string $name,
         public string $email,
         public string $cpf,
-        public string $password
+        public string $password,
     )
     {
     }
@@ -22,7 +22,7 @@ class CreateUserRequestDTO extends BaseDTO
             name: $data['name'],
             email: $data['email'],
             cpf: $data['cpf'],
-            password: Hash::make($data['password'])
+            password: Hash::make($data['password']),
         );
     }
 }

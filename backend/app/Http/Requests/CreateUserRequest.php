@@ -20,7 +20,7 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'cpf' => ['required', 'string', 'unique:users', new Cpf()],
-            'password' => 'required|min:6'
+            'password' => 'required|min:6|confirmed'
         ];
     }
 

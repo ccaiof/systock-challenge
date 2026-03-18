@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Users;
 
-use App\DTOs\User\CreateUserRequestDTO;
-use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
@@ -19,7 +17,8 @@ class CreateUserTest extends TestCase
             "name" => 'Caio',
             "email" => 'caio@email.com',
             "cpf" => '12345678909',
-            "password" => '123456'
+            "password" => '123456',
+            "password_confirmation" => '123456'
         ];
 
         $this->callRequest($payload)

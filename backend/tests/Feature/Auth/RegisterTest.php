@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Auth;
 
-use App\DTOs\User\CreateUserRequestDTO;
-use App\DTOs\User\CreateUserResponseDTO;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -15,24 +13,25 @@ class RegisterTest extends TestCase
 
     public function test_should_do_register_when_user_successfully()
     {
-        $name = fake()->name();
-        $email = fake()->email();
-        $user = new CreateUserRequestDTO(
-            $name,
-            $email,
-            fake()->cpf(),
-            fake()->password(8),
-        );
-        $expectedResponse = new CreateUserResponseDTO(
-            1,
-            $name,
-            $email,
-        );
+        $password = fake()->password(6);
+        $payload = [
+            "name" => fake()->name(),
+            "email" => fake()->email(),
+            "cpf" => fake()->cpf(),
+            "password" => $password,
+            "password_confirmation" => $password
+        ];
 
-        $response = $this->postJson(route('auth.register'), $user->toArray());
+        $response = $this->postJson(route('auth.register'), $payload);
 
         $response
-            ->assertExactJson($expectedResponse->toArray())
+            ->assertJsonStructure([
+                "data" => [
+                    "id",
+                    "name",
+                    "email",
+                ]
+            ])
             ->assertCreated();
     }
 
@@ -41,15 +40,18 @@ class RegisterTest extends TestCase
         app()->setLocale('pt_BR');
 
         $user = User::factory()->create();
+        $password = fake()->password(8);
 
-        $userError = new CreateUserRequestDTO(
-            $user->name,
-            $user->email,
-            fake()->cpf(),
-            fake()->password(8),
-        );
+        $payload = [
+            "name" => 'Test user',
+            "email" => $user->email,
+            "cpf" => fake()->cpf(),
+            "password" => $password,
+            "password_confirmation" => $password
+        ];
 
-        $response = $this->postJson(route('auth.register'), $userError->toArray());
+
+        $response = $this->postJson(route('auth.register'), $payload);
 
         $response
             ->assertJsonValidationErrors(['email'])
@@ -63,15 +65,16 @@ class RegisterTest extends TestCase
     public function test_should_not_register_when_user_with_existing_cpf()
     {
         $user = User::factory()->create();
+        $password = fake()->password(8);
+        $payload = [
+            "name" => 'Test user',
+            "email" => fake()->email(),
+            "cpf" => $user->cpf,
+            "password" => $password,
+            "password_confirmation" => $password
+        ];
 
-        $userError = new CreateUserRequestDTO(
-            $user->name,
-            fake()->email(),
-            $user->cpf,
-            fake()->password(8),
-        );
-
-        $response = $this->postJson(route('auth.register'), $userError->toArray());
+        $response = $this->postJson(route('auth.register'), $payload);
 
         $response
             ->assertJsonValidationErrors(['cpf'])
