@@ -3,13 +3,15 @@
 namespace App\DTOs\User;
 
 use App\DTOs\BaseDTO;
+use Illuminate\Support\Facades\Hash;
 
-class CreateUserRequestDTO extends BaseDTO
+class RegisterUserRequestDTO extends BaseDTO
 {
     function __construct(
         public string $name,
         public string $email,
         public string $cpf,
+        public string $password,
     )
     {
     }
@@ -20,6 +22,7 @@ class CreateUserRequestDTO extends BaseDTO
             name: $data['name'],
             email: $data['email'],
             cpf: $data['cpf'],
+            password: Hash::make($data['password']),
         );
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\DTOs\User\CreateUserRequestDTO;
+use App\DTOs\User\RegisterUserRequestDTO;
 use App\Rules\Cpf;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateUserRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,11 +20,12 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'cpf' => ['required', 'string', 'unique:users', new Cpf()],
+            'password' => 'required|min:6|confirmed'
         ];
     }
 
-    public function toDTO(): CreateUserRequestDTO
+    public function toDTO(): RegisterUserRequestDTO
     {
-        return CreateUserRequestDTO::fromArray($this->validated());
+        return RegisterUserRequestDTO::fromArray($this->validated());
     }
 }
