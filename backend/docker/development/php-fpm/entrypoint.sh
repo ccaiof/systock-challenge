@@ -13,6 +13,9 @@ chown -R ${USER_ID}:${GROUP_ID} /var/www || echo "Some files could not be change
 echo "Running Laravel migrations..."
 php artisan migrate --force
 
+echo "Running Laravel seeders..."
+php artisan db:seed --force
+
 # Clear configurations to avoid caching issues in development
 echo "Clearing configurations..."
 php artisan config:clear
