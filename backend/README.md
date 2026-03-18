@@ -1,59 +1,193 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Systock Test Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST em Laravel 12 para cadastro e gestão de usuários, com validações de negócio, tratamento padronizado de erros e suíte de testes automatizados.
 
-## About Laravel
+## Objetivo do projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este projeto expõe endpoints de CRUD de usuários e produtos com autenticação.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Principais funcionalidades:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Login de usuário.
+- Registro de usuário.
+- Listagem paginada de usuários.
+- Consulta de usuário por ID.
+- Atualização de usuário.
+- Remoção de usuário.
+- Validação de CPF e validações de formulário.
 
-## Learning Laravel
+## Stack utilizada
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.4+
+- Laravel 12
+- PostgreSQL 18
+- Docker e Docker Compose
+- PHPUnit 11
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Pré-requisitos
 
-## Laravel Sponsors
+Opção recomendada (Docker):
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Docker
+- Docker Compose v2
+- Make (opcional, para atalhos)
 
-### Premium Partners
+Opção local (sem Docker):
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- PHP 8.2+
+- Composer
+- PostgreSQL
 
-## Contributing
+## Como executar com Docker (recomendado)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Copie o arquivo de ambiente:
 
-## Code of Conduct
+~~~bash
+cp .env.example .env
+~~~
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. Ajuste variáveis de banco no .env (mínimo):
 
-## Security Vulnerabilities
+~~~env
+DB_CONNECTION=pgsql
+DB_HOST=database
+DB_PORT=5432
+DB_DATABASE=backend
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+~~~
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. Suba os containers:
 
-## License
+~~~bash
+make up
+~~~
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Se não tiver Make:
+
+~~~bash
+docker compose -f compose.dev.yaml up -d
+~~~
+
+4. Instale dependências PHP:
+
+~~~bash
+docker compose -f compose.dev.yaml exec workspace composer install
+~~~
+
+5. Gere a chave da aplicação:
+
+~~~bash
+docker compose -f compose.dev.yaml exec workspace php artisan key:generate
+~~~
+
+6. Rode as migrations:
+
+~~~bash
+docker compose -f compose.dev.yaml exec workspace php artisan migrate
+~~~
+
+7. Acesse a API:
+
+- http://localhost/api/v1/users
+
+## Como executar sem Docker
+
+1. Copie o ambiente:
+
+~~~bash
+cp .env.example .env
+~~~
+
+2. Configure o banco no .env para sua instância local do PostgreSQL.
+
+3. Instale dependências:
+
+~~~bash
+composer install
+~~~
+
+4. Gere a chave e rode migrations:
+
+~~~bash
+php artisan key:generate
+php artisan migrate
+~~~
+
+5. Suba o servidor:
+
+~~~bash
+php artisan serve
+~~~
+
+6. Acesse:
+
+- http://127.0.0.1:8000/api/v1/users
+
+## Como executar os testes
+
+Com Docker (deve executar o comando `make up` antes):
+
+~~~bash
+make test
+~~~
+
+Sem Make:
+
+~~~bash
+docker compose -f compose.dev.yaml exec workspace php artisan test
+~~~
+
+Sem Docker:
+
+~~~bash
+php artisan test
+~~~
+
+Executar apenas uma classe de teste:
+
+~~~bash
+php artisan test --filter=UpdateUserTest
+~~~
+
+## Cobertura de testes
+
+O projeto já possui configuração de coverage no phpunit.xml para gerar relatórios em:
+
+- tmp/coverage/index.html
+- tmp/coverage.txt
+- tmp/logs/clover.xml
+
+## Comandos úteis
+
+Subir ambiente de desenvolvimento:
+
+~~~bash
+make up
+~~~
+
+Executar testes:
+
+~~~bash
+make test
+~~~
+
+Parar e limpar ambiente Docker de desenvolvimento:
+
+~~~bash
+make down
+~~~
+
+## Troubleshooting rápido
+
+- Erro de conexão com banco:
+	confira DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME e DB_PASSWORD no .env.
+
+- Erro de chave de aplicação:
+	rode php artisan key:generate.
+
+- Falha de migrations:
+	confirme se o container database está saudável antes de executar migrate.
+
+- Testes sem cobertura:
+	habilite XDEBUG_MODE=coverage na execução.
