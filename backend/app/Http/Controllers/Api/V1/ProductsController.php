@@ -7,6 +7,7 @@ use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Response;
 
 class ProductsController extends Controller
@@ -16,6 +17,22 @@ class ProductsController extends Controller
         $products = Product::query()->paginate();
 
         return ProductResource::collection($products);
+    }
+
+    public function indexByUser(User $user)
+    {
+        $products = $user->products()->paginate();
+
+        return ProductResource::collection($products);
+    }
+
+    public function storeByUser(CreateProductRequest $request, User $user)
+    {
+        $product = $user->products()->create($request->validated());
+
+        return ProductResource::make($product)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(int $id)
