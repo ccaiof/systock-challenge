@@ -1,4 +1,6 @@
 <script setup>
+import { useRoute } from 'vue-router'
+
 defineProps({
   drawer: {
     type: Boolean,
@@ -7,11 +9,19 @@ defineProps({
 })
 
 defineEmits(['update:drawer'])
+const route = useRoute()
 
 const items = [
   {
-    title: 'Users',
-    value: '/users',
+    title: 'Dashboard',
+    to: '/admin/dashboard',
+    props: {
+      prependIcon: 'mdi-home',
+    },
+  },
+  {
+    title: 'Usuários',
+    to: '/admin/users',
     props: {
       prependIcon: 'mdi-account-group',
     },
@@ -25,6 +35,16 @@ const items = [
     @update:model-value="$emit('update:drawer', $event)"
     :location="$vuetify.display.mobile ? 'bottom' : undefined"
   >
-    <v-list :items="items" />
+    <v-list nav density="comfortable">
+      <v-list-item
+        v-for="item in items"
+        :key="item.to"
+        :to="item.to"
+        :title="item.title"
+        :prepend-icon="item.props.prependIcon"
+        :active="route.path === item.to"
+        rounded="lg"
+      />
+    </v-list>
   </v-navigation-drawer>
 </template>

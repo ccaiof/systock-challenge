@@ -32,9 +32,9 @@ onMounted(loadUser)
     <Sidebar :drawer="drawer" @update:drawer="drawer = $event" />
 
     <v-main>
-      <v-container>
+      <div class="pa-2">
         <router-view :user="user" :loading-user="isLoading || authStore.loadingUser" />
-      </v-container>
+      </div>
     </v-main>
   </v-app>
 </template>

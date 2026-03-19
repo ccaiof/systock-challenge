@@ -26,7 +26,17 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'admin-dashboard',
+          component: () => import('../views/admin/DashboardView.vue'),
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
           component: () => import('../views/admin/UsersView.vue'),
+        },
+        {
+          path: 'users/:userId/products',
+          name: 'admin-user-products',
+          component: () => import('../views/admin/UserProductsView.vue'),
         },
       ],
     },
