@@ -8,7 +8,8 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\User\CreateUserService;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -36,18 +37,35 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        if (! Auth::attempt($request->only(['email', 'password']))) {
+        $user = User::where('email', $request->string('email'))->first();
+
+        if (! $user || ! Hash::check($request->string('password'), $user->password)) {
             return response()->json([
                 'status' => Response::HTTP_UNAUTHORIZED,
-                'message' => __('auth.failed'),
+                'message' => 'Credenciais inválidas.',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $request->session()->regenerate();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status' => Response::HTTP_OK,
-            'message' => __('auth.login_success'),
+            'message' => 'Login realizado com sucesso.',
+            'data' => UserResource::make($user),
+            'token' => $token,
+            'token_type' => 'Bearer',
+        ], Response::HTTP_OK);
+    }
+
+    public function logout(Request $request)
+    {
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
+
+        return response()->json([
+            'status' => Response::HTTP_OK,
+            'message' => 'Logout realizado com sucesso.',
         ], Response::HTTP_OK);
     }
 }
