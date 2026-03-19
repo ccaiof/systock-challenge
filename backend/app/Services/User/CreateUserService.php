@@ -22,8 +22,6 @@ class CreateUserService
 
         $newUser = User::create($createUserRequestDTO->toArray());
 
-        return new CreateUserResponseDTO($newUser->id, $newUser->name, $newUser->email);
+        return new CreateUserResponseDTO($newUser->id, $newUser->name, $newUser->email, $newUser->cpf);
     }
-
-
 }
