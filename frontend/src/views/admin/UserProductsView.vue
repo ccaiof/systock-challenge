@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUsersStore } from '@/stores/users'
 import { useAuthStore } from '@/stores/auth'
+import ProductsTable from '@/components/products/ProductsTable.vue'
+import ProductFormDialog from '@/components/products/ProductFormDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -68,6 +70,19 @@ const closeCreateDialog = () => {
   editingProductId.value = null
 }
 
+const handleDialogModelValue = (value) => {
+  if (!value) {
+    closeCreateDialog()
+    return
+  }
+
+  showCreateDialog.value = value
+}
+
+const updateProductForm = (value) => {
+  productForm.value = value
+}
+
 const createProduct = async () => {
   const userId = route.params.userId
   saving.value = true
@@ -131,41 +146,12 @@ onMounted(loadUserProducts)
       <v-progress-circular v-if="loading" indeterminate color="primary" class="ma-auto" />
 
       <div v-else-if="products.length > 0">
-        <v-table>
-          <thead>
-            <tr>
-              <th class="text-left">Nome</th>
-              <th class="text-left">Descrição</th>
-              <th class="text-left">Preço</th>
-              <th class="text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="product in products" :key="product.id">
-              <td>{{ product.nome }}</td>
-              <td>{{ product.descricao }}</td>
-              <td>R$ {{ parseFloat(product.preco).toFixed(2) }}</td>
-              <td class="text-right">
-                <v-btn
-                  icon="mdi-pencil"
-                  size="small"
-                  variant="text"
-                  color="primary"
-                  @click="openEditDialog(product)"
-                />
-                <v-btn
-                  icon="mdi-delete"
-                  size="small"
-                  variant="text"
-                  color="error"
-                  :loading="deletingId === product.id"
-                  :disabled="deletingId === product.id"
-                  @click="removeProduct(product.id)"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
+        <ProductsTable
+          :products="products"
+          :deleting-id="deletingId"
+          @edit="openEditDialog"
+          @delete="removeProduct"
+        />
       </div>
 
       <div v-else class="text-center py-12">
@@ -173,45 +159,14 @@ onMounted(loadUserProducts)
       </div>
     </v-card>
 
-    <v-dialog v-model="showCreateDialog" max-width="520">
-      <v-card>
-        <v-card-title>{{ isEditMode ? 'Editar Produto' : 'Novo Produto' }}</v-card-title>
-        <v-card-text class="pt-6">
-          <v-text-field
-            v-model="productForm.nome"
-            label="Nome"
-            variant="outlined"
-            prepend-inner-icon="mdi-package-variant"
-            class="mb-4"
-          />
-
-          <v-textarea
-            v-model="productForm.descricao"
-            label="Descrição"
-            variant="outlined"
-            prepend-inner-icon="mdi-text"
-            rows="3"
-            class="mb-4"
-          />
-
-          <v-text-field
-            v-model="productForm.preco"
-            label="Preço"
-            type="number"
-            min="0"
-            step="0.01"
-            variant="outlined"
-            prepend-inner-icon="mdi-currency-brl"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn variant="text" @click="closeCreateDialog">Cancelar</v-btn>
-          <v-btn color="primary" :loading="saving" :disabled="saving" @click="createProduct">
-            {{ isEditMode ? 'Atualizar' : 'Salvar' }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ProductFormDialog
+      :model-value="showCreateDialog"
+      :is-edit-mode="isEditMode"
+      :saving="saving"
+      :form="productForm"
+      @update:model-value="handleDialogModelValue"
+      @update:form="updateProductForm"
+      @save="createProduct"
+    />
   </div>
 </template>
