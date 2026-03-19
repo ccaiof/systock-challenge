@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
-import api from '@/services/axios'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const name = ref('')
 const email = ref('')
@@ -14,6 +15,8 @@ const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 const form = ref(null)
+const router = useRouter()
+const authStore = useAuthStore()
 
 const formatCPF = (value) => {
   const cleanValue = value.replace(/\D/g, '')
@@ -65,9 +68,7 @@ const register = async () => {
 
   loading.value = true
   try {
-    await api.get('/sanctum/csrf-cookie')
-
-    const response = await api.post('/register', {
+    await authStore.register({
       name: name.value,
       email: email.value,
       cpf: cpf.value.replace(/\D/g, ''),
@@ -76,7 +77,7 @@ const register = async () => {
     })
 
     showSnackbar('Cadastro realizado com sucesso!', 'success')
-    console.log('Register response:', response.data)
+    await router.push({ name: 'admin-dashboard' })
 
     // Limpar form
     name.value = ''

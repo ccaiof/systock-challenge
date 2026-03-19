@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import api from '@/services/axios'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
 const password = ref('')
@@ -10,6 +11,8 @@ const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 const form = ref(null)
+const router = useRouter()
+const authStore = useAuthStore()
 
 const emailRules = [
   (v) => !!v || 'Email é obrigatório',
@@ -33,15 +36,13 @@ const login = async () => {
 
   loading.value = true
   try {
-    await api.get('/sanctum/csrf-cookie')
-
-    const response = await api.post('/login', {
+    await authStore.login({
       email: email.value,
       password: password.value,
     })
 
     showSnackbar('Login realizado com sucesso!', 'success')
-    console.log('Login response:', response.data)
+    await router.push({ name: 'admin-dashboard' })
   } catch (error) {
     const message = error.response?.data?.message || 'Erro ao fazer login'
     showSnackbar(message, 'error')
